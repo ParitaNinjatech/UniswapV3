@@ -1,24 +1,58 @@
-import logo from './logo.svg';
-import './App.css';
+import { createWeb3Modal, defaultConfig } from '@web3modal/ethers5'
+import { NavBar,HeroSection } from './components'
+import "./App.css"
+// 1. Get projectId
+const projectId = 'YOUR_PROJECT_ID'
+
+// 2. Set chains
+const mainnet = {
+  chainId: 1,
+  name: 'Ethereum',
+  currency: 'ETH',
+  explorerUrl: 'https://etherscan.io',
+  rpcUrl: 'https://cloudflare-eth.com'
+}
+
+const PolygonMainnet = {
+  chainId: 137,
+  name: 'Polygon',
+  currency: 'MATIC',
+  explorerUrl: 'https://polygonscan.com',
+  rpcUrl: 'https://polygon-rpc.com'
+}
+// 3. Create a metadata object
+const metadata = {
+  name: 'My Website',
+  description: 'My Website description',
+  url: 'https://mywebsite.com', // origin must match your domain & subdomain
+  icons: ['https://avatars.mywebsite.com/']
+}
+
+// 4. Create Ethers config
+const ethersConfig = defaultConfig({
+  /*Required*/
+  metadata,
+
+  /*Optional*/
+  enableEIP6963: true, // true by default
+  enableInjected: true, // true by default
+  enableCoinbase: true, // true by default
+  rpcUrl: '...', // used for the Coinbase SDK
+  defaultChainId: 1 // used for the Coinbase SDK
+})
+
+// 5. Create a AppKit instance
+createWeb3Modal({
+  ethersConfig,
+  chains: [mainnet,PolygonMainnet],
+  projectId,
+  enableAnalytics: true // Optional - defaults to your Cloud configuration
+})
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+   <><NavBar /><HeroSection /></>
+
   );
 }
 
