@@ -13,13 +13,14 @@ import { tokenObj, uniSwapObj } from '../../constant/ContractObject';
 export default function HeroSection({ accounts, tokenData }) {
     const { walletProvider } = useWeb3ModalProvider();
     const { address, chainId } = useWeb3ModalAccount()
-    console.log(walletProvider, "walletProvider");
 
 
     const [openSetting, setOpenSetting] = useState(false);
     const [openToken, setOpenToken] = useState(false);
     const [openTokenTwo, setOpenTokenTwo] = useState(false);
     const [amountIn, setAmount] = useState();
+    const [tokenOneBalance, setTokenOnebalance] = useState(0);
+    const [tokenTwoBalance, setTokenTwoBalance] = useState(0);
 
     const [tokenOne, setTokenOne] = useState({
         name: "",
@@ -34,6 +35,35 @@ export default function HeroSection({ accounts, tokenData }) {
     })
     console.log(tokenOne, "TokenOne");
 
+    const balanceof = async () => {
+        if (walletProvider && tokenOne.address) {
+            const provider = new Web3Provider(walletProvider);
+            const signer = provider.getSigner();
+            const tokenobj = await tokenObj(tokenOne.address, signer);
+
+            const balanceOne = await tokenobj.balanceOf(address);
+            const ethValue = ethers.utils.formatEther(balanceOne);
+            console.log(ethValue, "ethValue");
+            setTokenOnebalance(ethValue)
+
+        }
+    }
+
+    const balanceof2 = async () => {
+        if (walletProvider && tokenTwo.address) {
+            const provider = new Web3Provider(walletProvider);
+            const signer = provider.getSigner();
+
+
+            const tokenobj2 = await tokenObj(tokenTwo.address, signer);
+            const balancetwo = await tokenobj2.balanceOf(address);
+            const ethValue2 = ethers.utils.formatEther(balancetwo);
+            console.log(ethValue2, "ethValue");
+            setTokenTwoBalance(ethValue2)
+
+        }
+
+    }
     const swapToken = async () => {
         try {
             if (!walletProvider) {
@@ -43,6 +73,7 @@ export default function HeroSection({ accounts, tokenData }) {
 
             const provider = new Web3Provider(walletProvider);
             const signer = provider.getSigner();
+
             const getRouterAddress = routerAddress.get(chainId);
 
             console.log(signer, "signer", chainId, address, "Router Address:", getRouterAddress);
@@ -111,7 +142,10 @@ export default function HeroSection({ accounts, tokenData }) {
         }
     };
 
-
+    useEffect(() => {
+        balanceof()
+        balanceof2()
+    })
     return (
         <div className={Style.HeroSection}>
             <div className={Style.HeroSection_box}>
@@ -134,8 +168,12 @@ export default function HeroSection({ accounts, tokenData }) {
                     <button onClick={() => setOpenToken(true)}>
                         <img src={tokenOne.image || images.etherlogo} width={20} height={20} alt='token' />
                         {tokenOne.name || "ETH"}
-                        <small>9474</small>
+                        {/* <small>{tokenOneBalance}</small> */}
                     </button>
+                </div>
+                <div style={{display: "flex",gap:"15rem"}}>
+                    <p>Balance: </p>
+                    <p>{tokenOneBalance}</p>
                 </div>
 
                 <div className={Style.HeroSection_box_input}>
@@ -148,9 +186,13 @@ export default function HeroSection({ accounts, tokenData }) {
                     <button onClick={() => setOpenTokenTwo(true)}>
                         <img src={tokenTwo.image || images.etherlogo} width={20} height={20} alt='token' />
                         {tokenTwo.name || "ETH"}
-                        <small>9474</small>
                     </button>
                 </div>
+                <div style={{display: "flex",gap:"15rem"}}>
+                    <p>Balance: </p>
+                    <p>{tokenTwoBalance}</p>
+                </div>
+
 
                 {accounts ? (
                     <button className={Style.HeroSection_box_btn}>Connect Wallet</button>
