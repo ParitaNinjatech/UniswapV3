@@ -1,6 +1,10 @@
 import { createWeb3Modal, defaultConfig } from '@web3modal/ethers5'
-import { NavBar,HeroSection } from './components'
+import { NavBar,HeroSection } from './components';
+import Token from './Token';
+import Pool from './Pool';
 import "./App.css"
+import { Routes, Route } from "react-router-dom";
+
 // 1. Get projectId
 const projectId = 'YOUR_PROJECT_ID'
 
@@ -51,7 +55,14 @@ createWeb3Modal({
 
 function App() {
   return (
-   <><NavBar /><HeroSection /></>
+   <><NavBar />
+     {/* <HeroSection /> */}
+     <Routes>
+     <Route path="/swap" element={<HeroSection />} />
+     <Route path="/Tokens" element={<Token />} />
+     <Route path="/Pool" element={<Pool />} />
+     </Routes>
+   </>
 
   );
 }

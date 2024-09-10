@@ -9,9 +9,9 @@ function NavBar() {
   const [openTokenBox, setOpenTokenBox] = useState(false);
   const [accounts, setAccounts] = useState(false);
   const menuItem = [
-    { name: "Swap", link: "/" },
-    { name: "Tokens", link: "/" },
-    { name: "Pools", link: "/" }
+    { name: "Swap", link: "/swap" },
+    { name: "Tokens", link: "/Tokens" },
+    { name: "Pools", link: "/Pool" }
   ];
 
   return (
@@ -53,9 +53,9 @@ function NavBar() {
           <w3m-button />
         </div>
       </div>
-      {!openTokenBox && (
+      {/* {!openTokenBox && (
         <TokenList tokenDate="Hey" setOpenTokenBox={setOpenTokenBox} />
-      )}
+      )} */}
     </div>
   );
 }
