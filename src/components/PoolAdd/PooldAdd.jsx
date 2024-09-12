@@ -33,7 +33,7 @@ export default function PoolAdd() {
     const minPriceRange = (text) => {
         if (text === "+") {
             setMinPrice(minPrice + 1);
-        } else if (text === "-" && minPrice > 0) { // Preventing negative values
+        } else if (text === "-" && minPrice > 0) { 
             setMinPrice(minPrice - 1);
         }
     };
@@ -41,7 +41,7 @@ export default function PoolAdd() {
     const maxPriceRange = (text) => {
         if (text === "+") {
             setMaxPrice(maxPrice + 1);
-        } else if (text === "-" && maxPrice > 0) { // Preventing negative values
+        } else if (text === "-" && maxPrice > 0) {
             setMaxPrice(maxPrice - 1);
         }
     };

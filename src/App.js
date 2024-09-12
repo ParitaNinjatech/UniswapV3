@@ -20,7 +20,7 @@ const mainnet = {
 const PolygonMainnet = {
   chainId: 137,
   name: 'Polygon',
-  currency: 'MATIC',
+  currency: 'POL',
   explorerUrl: 'https://polygonscan.com',
   rpcUrl: 'https://polygon-rpc.com'
 }

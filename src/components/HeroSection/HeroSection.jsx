@@ -9,10 +9,11 @@ import images from "../../assets";
 import { Token, SearchToken } from "../index";
 import { routerAddress, ChainId } from '../../constant/Chain';
 import { tokenObj, uniSwapObj } from '../../constant/ContractObject';
+import { getAbi, FetchPrice } from '../../utils/FetchPrice';
 
 export default function HeroSection({ accounts, tokenData }) {
     const { walletProvider } = useWeb3ModalProvider();
-    const { address, chainId } = useWeb3ModalAccount()
+    const { address, chainId,isConnected } = useWeb3ModalAccount()
 
 
     const [openSetting, setOpenSetting] = useState(false);
@@ -21,6 +22,9 @@ export default function HeroSection({ accounts, tokenData }) {
     const [amountIn, setAmount] = useState();
     const [tokenOneBalance, setTokenOnebalance] = useState(0);
     const [tokenTwoBalance, setTokenTwoBalance] = useState(0);
+    const [amountOut, setAmountOut] = useState(0);
+    const [amountTwo,setAmountTwo] = useState(0)
+    const [loading, setLoading] = useState(false)
 
     const [tokenOne, setTokenOne] = useState({
         name: "",
@@ -42,7 +46,8 @@ export default function HeroSection({ accounts, tokenData }) {
             const tokenobj = await tokenObj(tokenOne.address, signer);
 
             const balanceOne = await tokenobj.balanceOf(address);
-            const ethValue = ethers.utils.formatEther(balanceOne);
+            const decimals = await tokenobj.decimals()
+            const ethValue = ethers.utils.formatUnits(balanceOne,decimals);
             console.log(ethValue, "ethValue");
             setTokenOnebalance(ethValue)
 
@@ -57,7 +62,8 @@ export default function HeroSection({ accounts, tokenData }) {
 
             const tokenobj2 = await tokenObj(tokenTwo.address, signer);
             const balancetwo = await tokenobj2.balanceOf(address);
-            const ethValue2 = ethers.utils.formatEther(balancetwo);
+            const decimals = await tokenobj2.decimals()
+            const ethValue2 = ethers.utils.formatUnits(balancetwo,decimals);
             console.log(ethValue2, "ethValue");
             setTokenTwoBalance(ethValue2)
 
@@ -78,7 +84,6 @@ export default function HeroSection({ accounts, tokenData }) {
 
             console.log(signer, "signer", chainId, address, "Router Address:", getRouterAddress);
 
-            // Check if router address and tokens are valid
             if (!getRouterAddress) {
                 alert("Invalid router address for the selected chain.");
                 return;
@@ -142,10 +147,29 @@ export default function HeroSection({ accounts, tokenData }) {
         }
     };
 
+    const SwapAmountOut = async (amountIn) => {
+        try {
+            setLoading(true)
+            const data = await FetchPrice(walletProvider, chainId, tokenOne.address, tokenTwo.address, amountIn);
+            console.log(data[1],"data2");
+            setAmountOut(data[1])
+
+        } catch (error) {
+            console.log(error);
+
+        } finally {
+            setLoading(false)
+        }
+    }
     useEffect(() => {
-        balanceof()
-        balanceof2()
-    })
+        if (walletProvider) {
+            balanceof()
+            balanceof2();
+            // getAbi(tokenOne.address)
+            // FetchPrice(walletProvider,chainId,tokenOne.address,tokenTwo.address,amountIn)
+        }
+
+    }, [tokenOne.address, tokenTwo.address, amountIn])
     return (
         <div className={Style.HeroSection}>
             <div className={Style.HeroSection_box}>
@@ -162,7 +186,7 @@ export default function HeroSection({ accounts, tokenData }) {
                         placeholder='0'
                         style={{ marginLeft: "0.5rem" }}
                         value={amountIn}
-                        onChange={(e) => setAmount(e.target.value)}
+                        onChange={(e) => (SwapAmountOut(e.target.value), setAmount(e.target.value))}
                         step="0.001" // Allows decimal points
                     />
                     <button onClick={() => setOpenToken(true)}>
@@ -171,31 +195,36 @@ export default function HeroSection({ accounts, tokenData }) {
                         {/* <small>{tokenOneBalance}</small> */}
                     </button>
                 </div>
-                <div style={{display: "flex",gap:"15rem"}}>
+                <div style={{ display: "flex", gap: "15rem" }}>
                     <p>Balance: </p>
-                    <p>{tokenOneBalance}</p>
+                    <p>{tokenOneBalance.slice(0,7)}</p>
                 </div>
 
                 <div className={Style.HeroSection_box_input}>
-                    <input
-                        type='number'
-                        placeholder='0'
-                        style={{ marginLeft: "0.5rem" }}
-                        step="0.000001" // Allows decimal points
+                    {loading ? (<img src={images.loading} width={70} height={50} style={{marginLeft:"10px"}} alt='token' />) : (
+                        <input
+                        style={{ marginLeft: "0.5rem"}}
+                        value={amountOut} 
+                        readOnly
+                
                     />
+                    )}
+
                     <button onClick={() => setOpenTokenTwo(true)}>
                         <img src={tokenTwo.image || images.etherlogo} width={20} height={20} alt='token' />
                         {tokenTwo.name || "ETH"}
                     </button>
                 </div>
-                <div style={{display: "flex",gap:"15rem"}}>
+                <div style={{ display: "flex", gap: "15rem" }}>
                     <p>Balance: </p>
-                    <p>{tokenTwoBalance}</p>
+                    <p>{tokenTwoBalance.slice(0,7)}</p>
                 </div>
 
 
-                {accounts ? (
+                {!isConnected ? (
                     <button className={Style.HeroSection_box_btn}>Connect Wallet</button>
+                ) : amountIn > tokenOneBalance ? (
+                    <button className={Style.HeroSection_box_btn} disabled>Insufficient Funds</button>
                 ) : (
                     <button className={Style.HeroSection_box_btn} onClick={() => swapToken()}>Swap</button>
                 )}
