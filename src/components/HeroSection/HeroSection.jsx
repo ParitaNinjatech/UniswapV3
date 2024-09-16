@@ -37,7 +37,6 @@ export default function HeroSection({ accounts, tokenData }) {
         image: "",
         address: ""
     })
-    console.log(tokenOne, "TokenOne");
 
     const balanceof = async () => {
         if (walletProvider && tokenOne.address) {
@@ -48,7 +47,6 @@ export default function HeroSection({ accounts, tokenData }) {
             const balanceOne = await tokenobj.balanceOf(address);
             const decimals = await tokenobj.decimals()
             const ethValue = ethers.utils.formatUnits(balanceOne,decimals);
-            console.log(ethValue, "ethValue");
             setTokenOnebalance(ethValue)
 
         }
@@ -64,7 +62,6 @@ export default function HeroSection({ accounts, tokenData }) {
             const balancetwo = await tokenobj2.balanceOf(address);
             const decimals = await tokenobj2.decimals()
             const ethValue2 = ethers.utils.formatUnits(balancetwo,decimals);
-            console.log(ethValue2, "ethValue");
             setTokenTwoBalance(ethValue2)
 
         }
@@ -82,7 +79,6 @@ export default function HeroSection({ accounts, tokenData }) {
 
             const getRouterAddress = routerAddress.get(chainId);
 
-            console.log(signer, "signer", chainId, address, "Router Address:", getRouterAddress);
 
             if (!getRouterAddress) {
                 alert("Invalid router address for the selected chain.");
@@ -102,7 +98,6 @@ export default function HeroSection({ accounts, tokenData }) {
             const tokenobj = await tokenObj(tokenOne.address, signer);
             const uniswapobj = await uniSwapObj(getRouterAddress, signer);
             const WETH = await uniswapobj.WETH9()
-            console.log(WETH, "WETH");
 
 
             const amountApproval = ethers.utils.parseUnits(amountIn, 18);
@@ -117,8 +112,6 @@ export default function HeroSection({ accounts, tokenData }) {
                 sqrtPriceLimitX96: 0
             };
 
-            console.log(swapData, "Swap Data");
-
             // Approve token
             const approvetoken = await tokenobj.approve(getRouterAddress, amountApproval);
             await approvetoken.wait();
@@ -130,16 +123,13 @@ export default function HeroSection({ accounts, tokenData }) {
                     value: ethers.utils.parseUnits(amountIn, 18)
                 });
 
-                console.log("Swap Result: ", swapTx);
                 await swapTx.wait();
             } else if (tokenTwo.address === WETH) {
                 const swapTx = await uniswapobj.exactInputSingle(swapData);
                 console.log("Swap Result: ", swapTx);
-                await swapTx.wait();
             } else {
                 const swapTx = await uniswapobj.exactInputSingle(swapData);
                 console.log("Swap Result: ", swapTx);
-                await swapTx.wait();
             }
 
         } catch (error) {
@@ -151,7 +141,6 @@ export default function HeroSection({ accounts, tokenData }) {
         try {
             setLoading(true)
             const data = await FetchPrice(walletProvider, chainId, tokenOne.address, tokenTwo.address, amountIn);
-            console.log(data[1],"data2");
             setAmountOut(data[1])
 
         } catch (error) {
@@ -165,8 +154,6 @@ export default function HeroSection({ accounts, tokenData }) {
         if (walletProvider) {
             balanceof()
             balanceof2();
-            // getAbi(tokenOne.address)
-            // FetchPrice(walletProvider,chainId,tokenOne.address,tokenTwo.address,amountIn)
         }
 
     }, [tokenOne.address, tokenTwo.address, amountIn])
@@ -197,7 +184,7 @@ export default function HeroSection({ accounts, tokenData }) {
                 </div>
                 <div style={{ display: "flex", gap: "15rem" }}>
                     <p>Balance: </p>
-                    <p>{tokenOneBalance.slice(0,7)}</p>
+                    <p>{tokenOneBalance}</p>
                 </div>
 
                 <div className={Style.HeroSection_box_input}>
@@ -217,7 +204,7 @@ export default function HeroSection({ accounts, tokenData }) {
                 </div>
                 <div style={{ display: "flex", gap: "15rem" }}>
                     <p>Balance: </p>
-                    <p>{tokenTwoBalance.slice(0,7)}</p>
+                    <p>{tokenTwoBalance}</p>
                 </div>
 
 
