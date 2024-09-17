@@ -215,6 +215,37 @@
 
 .token{
     position: absolute;
-    top: 0rem;
-    right: 32rem;
+    background-color: #1e1e1e;
+    inset: 0 0 0 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #cff80b;
+}
+
+
+@media only screen and (max-width :35em) {
+    .PoolAdd_box_price{
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .PoolAdd_box_price_left_token_info{
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background-color: #cff80b;
+        border-radius: .5rem;
+        color: #1e1e1e;
+        padding: 0.5rem;
+        font-weight: 700;
+    }
+
+    .token{
+        position: absolute;
+        background-color: #1e1e1e;
+        inset: 0% 0% 50% 0;
+        display: flex;
+        border: 1px solid #cff80b;
+    }
 }

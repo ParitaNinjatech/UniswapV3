@@ -3,11 +3,14 @@ import Style from "./Pool.module.css";
 import images from "./assets";
 import { PooldAdd , PoolConnect } from './components';
 
-export default function Pool() {
+export default function Pool({tokenData}) {
+  const [closeModel,setCloseModel] = useState(false);
   return (
     <div className={Style.Pool}>
-      {/* <PooldAdd/> */}
-      <PoolConnect/>
+      {closeModel ? (<PooldAdd setCloseModel={setCloseModel} tokenData={tokenData} />) : (
+
+      <PoolConnect setCloseModel={setCloseModel}/>
+      )}
     </div>
 
   )}

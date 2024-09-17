@@ -6,7 +6,7 @@ import Style from "./Token.module.css";
 import images from "../../assets";
 import { Toggle } from "../index";
 
-function Token({ setOpenSetting }) {
+function Token({ setOpenSetting, setSlippage, slippage, setDeadline, deadline }) {
   return (
     <div className={Style.Token}>
       <div className={Style.Token_box}>
@@ -20,16 +20,16 @@ function Token({ setOpenSetting }) {
 
         <div className={Style.Token_box_input}>
           <button>Auto</button>
-          <input type='text' placeholder='0.10%' />
+          <input type='number' placeholder={slippage} onChange={(e) => setSlippage(e.target.value)} value={slippage} />
         </div>
 
         <p className={Style.Token_box_para}>
-          Slippage tolerance{" "}
+          Deadline Time{" "}
           <img src={images.lock} alt='img' width={20} height={20} />
         </p>
 
         <div className={Style.Token_box_input}>
-          <input type='text' placeholder='30' />
+          <input type='number' placeholder={deadline} onChange={(e)=>setDeadline(e.target.value)} value={deadline} />
           <button>Minutes</button>
         </div>
 
@@ -38,7 +38,7 @@ function Token({ setOpenSetting }) {
           <p className={Style.Token_box_para}>
             Transaction Deadline
           </p>
-          <Toggle label="No"/>
+          <Toggle label="No" />
         </div>
       </div>
     </div>
