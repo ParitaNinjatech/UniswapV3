@@ -8,7 +8,7 @@ import { tokenObj, uniswapLiquidity } from "../../constant/ContractObject";
 import { ethers } from "ethers";
 
 export default function PoolConnect({ setCloseModel }) {
-  const { walletProvider, connect, disconnect } = useWeb3ModalProvider();
+  const { walletProvider, connect } = useWeb3ModalProvider();
   const { address, chainId, isConnected } = useWeb3ModalAccount();
   const [positions, setPositions] = useState([]);
 

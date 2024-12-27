@@ -5,7 +5,6 @@ import PoolAbi from "../constant/abis/UniswapV3Pool.json";
 import TokenAbi from "../constant/abis/token.json"
 import { Web3Provider } from '@ethersproject/providers';
 import { poolAddress,quoteAddress } from "../constant/Chain";
-import { log } from "@uniswap/smart-order-router";
 
 export const getAbi = async (tokenAddress) => {
   try {

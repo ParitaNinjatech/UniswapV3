@@ -39,11 +39,17 @@ export default function SearchToken({ openToken, tokens, tokenData }) {
     },
     {
       img: images.ether,
-      name: "MATIC"
+      name: "MATIC",
+      address: "0xfC11F0080C6fA8b3F7caE4C5fb9f83BBbcb96197",
+      decimals: 18,
+      chainId: 137,
     },
     {
       img: images.ether,
-      name: "HEY"
+      name: "HEY",
+      address: "0x26c88bC1a25d71AbFAdc8C97401929F89cE1DD10",
+      decimals: 18,
+      chainId: 137,
     }
   ];
 

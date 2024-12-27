@@ -152,7 +152,7 @@ export default function PoolAdd({ setCloseModel, tokenData }) {
 
     //             const tickLower = Math.floor(nearestUsableTick(Math.log(minPrice), tickSpacing));
     //             const tickUpper = Math.floor(nearestUsableTick(Math.log(maxPrice), tickSpacing));
-                
+
 
     //             console.log(tickLower, "tickLower", tickUpper, "tickUpper");
 
@@ -207,100 +207,100 @@ export default function PoolAdd({ setCloseModel, tokenData }) {
 
     const CheckTickMath = async () => {
         try {
-          if (walletProvider) {
-            const provider = new Web3Provider(walletProvider);
-            const signer = provider.getSigner();
-            const getFactoryAddress = factoryAddress.get(chainId);
-      
-            const factoryContract = await factoryObj(getFactoryAddress, signer);
-      
-            const getPairAddress = await factoryContract.getPool(
-              "0x6f8a06447Ff6FcF75d803135a7de15CE88C1d4ec",
-              "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
-              3000
-            );
-      
-            if (getPairAddress === ethers.constants.AddressZero) {
-              const createPoolTx = await factoryContract.createPool(
-                "0x6f8a06447Ff6FcF75d803135a7de15CE88C1d4ec",
-                "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
-                3000
-              );
-              await createPoolTx.wait();
-      
-              const price = 100; 
-              const sqrtPrice = Math.sqrt(price);
-              const sqrtPriceX96 = Math.floor(sqrtPrice * Math.pow(2, 96));
-      
-              const poolContract = new ethers.Contract(getPairAddress, PairAbi, signer);
-              const initializeTx = await poolContract.initialize(sqrtPriceX96);
-              await initializeTx.wait();
-      
-              console.log("Pool initialized with sqrtPriceX96:", sqrtPriceX96);
+            if (walletProvider) {
+                const provider = new Web3Provider(walletProvider);
+                const signer = provider.getSigner();
+                const getFactoryAddress = factoryAddress.get(chainId);
+
+                const factoryContract = await factoryObj(getFactoryAddress, signer);
+
+                const getPairAddress = await factoryContract.getPool(
+                    tokenOne.address,
+                    tokenTwo.address,
+                    3000
+                );
+
+                if (getPairAddress === ethers.constants.AddressZero) {
+                    const createPoolTx = await factoryContract.createPool(
+                        tokenOne.address,
+                        tokenTwo.address,
+                        3000
+                    );
+                    await createPoolTx.wait();
+
+                    const price = 100;
+                    const sqrtPrice = Math.sqrt(price);
+                    const sqrtPriceX96 = Math.floor(sqrtPrice * Math.pow(2, 96));
+
+                    const poolContract = new ethers.Contract(getPairAddress, PairAbi, signer);
+                    const initializeTx = await poolContract.initialize(sqrtPriceX96);
+                    await initializeTx.wait();
+
+                    console.log("Pool initialized with sqrtPriceX96:", sqrtPriceX96);
+                }
+
+                const pairContract = new ethers.Contract(getPairAddress, PairAbi, signer);
+                const { sqrtPriceX96, tick } = await pairContract.slot0();
+                const tickSpacing = await pairContract.tickSpacing();
+                const fee = await pairContract.fee();
+                const liquidity = await pairContract.liquidity();
+
+                console.log(tickSpacing, "tickSpacing", sqrtPriceX96, "sqrtPriceX96", fee, "fee", liquidity, "liquidity", tick, "tick");
+
+                // const minPrice = 50;  // Example: Adjust to your needs
+                // const maxPrice = 200; // Example: Adjust to your needs
+
+                // Calculate ticks based on the minPrice and maxPrice
+                const tickLower = nearestUsableTick(Math.floor(Math.log(minPrice) / Math.log(1.0001)), tickSpacing);
+                const tickUpper = nearestUsableTick(Math.ceil(Math.log(maxPrice) / Math.log(1.0001)), tickSpacing);
+
+                console.log(tickLower, "tickLower", tickUpper, "tickUpper");
+
+                // setTickLower(tickmin);
+                // setTickUpper(tickmax);
+
+                const getPoolAddresss = poolAddress.get(chainId);
+                const poolContract = await uniswapLiquidity(getPoolAddresss, signer);
+
+                const token0Contract = await tokenObj(tokenOne.address, signer);
+                const token1Contract = await tokenObj(tokenTwo.address, signer);
+
+                const amountone = ethers.utils.parseUnits(tokenAmountOne, 18);
+                const amounttwo = ethers.utils.parseUnits(tokenAmountTwo, 18);
+
+                const approval0Tx = await token0Contract.approve(getPoolAddresss, amountone);
+                await approval0Tx.wait();
+                const approval1Tx = await token1Contract.approve(getPoolAddresss, amounttwo);
+                await approval1Tx.wait();
+
+                console.log("Token approvals completed");
+
+                const minParams = {
+                    token0: tokenOne.address,
+                    token1: tokenTwo.address,
+                    fee: 3000,
+                    tickLower: tickLower,
+                    tickUpper: tickUpper,
+                    amount0Desired: amountone,
+                    amount1Desired: amounttwo,
+                    amount0Min: 0,
+                    amount1Min: 0,
+                    recipient: address,
+                    deadline: Math.floor(Date.now() / 1000) + 60 * 10
+                };
+
+                console.log("Mint parameters:", minParams);
+
+                const estimatedGas = await poolContract.estimateGas.mint(minParams);
+                const mintTx = await poolContract.mint(minParams, { gasLimit: estimatedGas.mul(2) });
+                await mintTx.wait();
+
+                console.log("Liquidity added to the pool.");
             }
-      
-            const pairContract = new ethers.Contract(getPairAddress, PairAbi, signer);
-            const { sqrtPriceX96, tick } = await pairContract.slot0();
-            const tickSpacing = await pairContract.tickSpacing();
-            const fee = await pairContract.fee();
-            const liquidity = await pairContract.liquidity();
-      
-            console.log(tickSpacing, "tickSpacing", sqrtPriceX96, "sqrtPriceX96", fee, "fee", liquidity, "liquidity", tick, "tick");
-      
-            const minPrice = 50;  // Example: Adjust to your needs
-            const maxPrice = 200; // Example: Adjust to your needs
-      
-            // Calculate ticks based on the minPrice and maxPrice
-            const tickLower = nearestUsableTick(Math.floor(Math.log(minPrice) / Math.log(1.0001)), tickSpacing);
-            const tickUpper = nearestUsableTick(Math.ceil(Math.log(maxPrice) / Math.log(1.0001)), tickSpacing);
-      
-            console.log(tickLower, "tickLower", tickUpper, "tickUpper");
-      
-            // setTickLower(tickmin);
-            // setTickUpper(tickmax);
-      
-            const getPoolAddresss = poolAddress.get(chainId);
-            const poolContract = await uniswapLiquidity(getPoolAddresss, signer);
-      
-            const token0Contract = await tokenObj("0x6f8a06447Ff6FcF75d803135a7de15CE88C1d4ec", signer);
-            const token1Contract = await tokenObj("0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063", signer);
-      
-            const amountone = ethers.utils.parseUnits("10", 18);
-            const amounttwo = ethers.utils.parseUnits("0.03", 18);
-      
-            const approval0Tx = await token0Contract.approve(getPoolAddresss, amountone);
-            await approval0Tx.wait();
-            const approval1Tx = await token1Contract.approve(getPoolAddresss, amounttwo);
-            await approval1Tx.wait();
-      
-            console.log("Token approvals completed");
-      
-            const minParams = {
-              token0: "0x6f8a06447Ff6FcF75d803135a7de15CE88C1d4ec",
-              token1: "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
-              fee: 3000,
-              tickLower: tickLower,
-              tickUpper: tickUpper,
-              amount0Desired: amountone,
-              amount1Desired: amounttwo,
-              amount0Min: 0,
-              amount1Min: 0,
-              recipient: address,
-              deadline: Math.floor(Date.now() / 1000) + 60 * 10
-            };
-      
-            console.log("Mint parameters:", minParams);
-      
-            const estimatedGas = await poolContract.estimateGas.mint(minParams);
-            const mintTx = await poolContract.mint(minParams, { gasLimit: estimatedGas.mul(2) });
-            await mintTx.wait();
-      
-            console.log("Liquidity added to the pool.");
-          }
         } catch (error) {
-          console.error("Error calculating ticks or adding liquidity: ", error);
+            console.error("Error calculating ticks or adding liquidity: ", error);
         }
-      };
+    };
 
     useEffect(() => {
         if (walletProvider) {

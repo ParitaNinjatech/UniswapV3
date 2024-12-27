@@ -6,7 +6,7 @@ import "./App.css"
 import { Routes, Route } from "react-router-dom";
 
 // 1. Get projectId
-const projectId = 'YOUR_PROJECT_ID'
+const projectId = '2fa6c12dde1b5cd1a88e4fd4cb690bca'
 
 // 2. Set chains
 const mainnet = {
@@ -28,7 +28,7 @@ const PolygonMainnet = {
 const metadata = {
   name: 'My Website',
   description: 'My Website description',
-  url: 'https://mywebsite.com', // origin must match your domain & subdomain
+  url: 'https://mywebsite.com', 
   icons: ['https://avatars.mywebsite.com/']
 }
 
@@ -37,7 +37,6 @@ const ethersConfig = defaultConfig({
   /*Required*/
   metadata,
 
-  /*Optional*/
   enableEIP6963: true, // true by default
   enableInjected: true, // true by default
   enableCoinbase: true, // true by default
@@ -45,7 +44,6 @@ const ethersConfig = defaultConfig({
   defaultChainId: 1 // used for the Coinbase SDK
 })
 
-// 5. Create a AppKit instance
 createWeb3Modal({
   ethersConfig,
   chains: [mainnet,PolygonMainnet],

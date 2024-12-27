@@ -80,20 +80,20 @@ export default function HeroSection({ accounts, tokenData }) {
             const getRouterAddress = routerAddress.get(chainId);
 
 
-            if (!getRouterAddress) {
-                alert("Invalid router address for the selected chain.");
-                return;
-            }
+            // if (!getRouterAddress) {
+            //     alert("Invalid router address for the selected chain.");
+            //     return;
+            // }
 
-            if (!tokenOne.address || !ethers.utils.isAddress(tokenOne.address)) {
-                alert("Invalid token address for Token One.");
-                return;
-            }
+            // if (!tokenOne.address || !ethers.utils.isAddress(tokenOne.address)) {
+            //     alert("Invalid token address for Token One.");
+            //     return;
+            // }
 
-            if (!tokenTwo.address || !ethers.utils.isAddress(tokenTwo.address)) {
-                alert("Invalid token address for Token Two.");
-                return;
-            }
+            // if (!tokenTwo.address || !ethers.utils.isAddress(tokenTwo.address)) {
+            //     alert("Invalid token address for Token Two.");
+            //     return;
+            // }
 
             const tokenobj = await tokenObj(tokenOne.address, signer);
             const uniswapobj = await uniSwapObj(getRouterAddress, signer);
