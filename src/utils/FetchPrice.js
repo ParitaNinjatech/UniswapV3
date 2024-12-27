@@ -5,6 +5,7 @@ import PoolAbi from "../constant/abis/UniswapV3Pool.json";
 import TokenAbi from "../constant/abis/token.json"
 import { Web3Provider } from '@ethersproject/providers';
 import { poolAddress,quoteAddress } from "../constant/Chain";
+import { log } from "@uniswap/smart-order-router";
 
 export const getAbi = async (tokenAddress) => {
   try {
@@ -28,6 +29,8 @@ export const getAbi = async (tokenAddress) => {
 
 export const FetchPrice = async(provider,chainId,tokenaddress0,tokenAddress1,inputAmount) =>{
     try {
+      console.log(provider,chainId,tokenaddress0,tokenAddress1,inputAmount,"provider,chainId,tokenaddress0,tokenAddress1,inputAmount");
+      
       if(provider){
         const provider1 = new Web3Provider(provider);
         const signer = provider1.getSigner();
